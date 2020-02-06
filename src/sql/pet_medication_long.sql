@@ -4,7 +4,7 @@ SELECT pets.party_chewy_id as pet_id,
        CASE 
          WHEN pmc.pet_med_id IS NOT NULL THEN 1 
          ELSE 0 
-       END AS med_condition 
+       END AS medication
 FROM   (SELECT DISTINCT pet_med_id, 
                         pet_med_nm 
         FROM   custods.pet_med
