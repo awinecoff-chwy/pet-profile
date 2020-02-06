@@ -1,2 +1,3 @@
 #ignore all .ini files
 *.ini
+*.DS_Store
