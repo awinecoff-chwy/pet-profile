@@ -4,6 +4,9 @@ import os
 import database_conn
 import pandas as pd
 import vertica_python
+import geopandas as gpd
+from shapely.geometry import Point, Polygon
+import matplotlib.pyplot as plt
 
 print ('import complete')
 
@@ -24,10 +27,28 @@ connection = vertica_python.connect(**database_conn.bidb.copy())
 #                               ''', connection).iloc[0]['COUNT']
 #
 ##count only customers that have at least one petprofile
-petprofile_customers_count = pd.read_sql ('''
-                               SELECT COUNT(DISTINCT petprofile_customer_master_id)
-                               FROM integrate.customer_petprofile_ps
-                              ''', connection).iloc[0]['COUNT']
+#petprofile_customers_count = pd.read_sql ('''
+#                               SELECT COUNT(DISTINCT petprofile_customer_master_id)
+ #                              FROM integrate.customer_petprofile_ps
+ #                             ''', connection).iloc[0]['COUNT']
+
+pet_customer_query = open('../sql/pet_customer_basic.sql')
+pet_customer_df = pd.read_sql_query(pet_customer_query.read(),connection)
+
+food_allergy_query = open('../sql/pet_food_allergy_long.sql') 
+food_allergy_df = pd.read_sql_query(food_allergy_query.read(),connection)
+
+med_allergy_query = open('../sql/pet_med_allergy_long.sql') 
+med_allergy_df = pd.read_sql_query(med_allergy_query.read(),connection)
+
+med_condition_query = open('../sql/pet_med_condition_long.sql') 
+med_condition_df = pd.read_sql_query(med_condition_query.read(),connection)
+
+medication_query = open('../sql/pet_medication_long.sql') 
+medication_df = pd.read_sql_query(medication_query.read(),connection)
+
+usa = gpd.read_file(os.getcwd() + '/states_21basic/states.shp')
+usa.head()
 #
 ##don't know if this is the best source for this
 #products_count = pd.read_sql ('''

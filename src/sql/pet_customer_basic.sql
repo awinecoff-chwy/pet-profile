@@ -60,3 +60,6 @@ FROM   custods.party_pet AS pets
        LEFT JOIN chewybi.customer_addresses ad 
               ON pc_int.petprofile_customer_id = ad.customer_id 
 WHERE  ad.customer_address_last_order_flag = 'true' 
+        AND pc_int.petprofile_status = 1
+        AND pt.pet_type_nm = 'Dog'
+        AND pets.party_chewy_id BETWEEN  38000000 AND 40000000;
