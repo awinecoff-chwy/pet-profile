@@ -7,6 +7,14 @@ import vertica_python
 import geopandas as gpd
 from shapely.geometry import Point, Polygon
 import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap as Basemap
+from matplotlib.colors import rgb2hex
+from matplotlib.patches import Polygon
+import numpy as np
+
+
+import plotly as py
+import plotly.graph_objs as go
 
 print ('import complete')
 
@@ -38,8 +46,8 @@ pet_customer_df = pd.read_sql_query(pet_customer_query.read(),connection)
 food_allergy_query = open('../sql/pet_food_allergy_long.sql') 
 food_allergy_df = pd.read_sql_query(food_allergy_query.read(),connection)
 
-med_allergy_query = open('../sql/pet_med_allergy_long.sql') 
-med_allergy_df = pd.read_sql_query(med_allergy_query.read(),connection)
+#med_allergy_query = open('../sql/pet_med_allergy_long.sql') 
+#med_allergy_df = pd.read_sql_query(med_allergy_query.read(),connection)
 
 med_condition_query = open('../sql/pet_med_condition_long.sql') 
 med_condition_df = pd.read_sql_query(med_condition_query.read(),connection)
@@ -51,7 +59,6 @@ usa = gpd.read_file(os.getcwd() + '/states_21basic/states.shp')
 usa = usa[['STATE_ABBR', 'SUB_REGION', 'STATE_FIPS', 'geometry']]
 usa.columns = ['us_state', 'us_subregion', 'state_fips', 'geometry']
 
-#pet_customer_df = pet_customer_df.join(usa,  on='us_state', how='left')
 pet_customer_df = pd.merge(pet_customer_df, usa, on='us_state', how='left')
 
 #Convert all profile characteristics to wide format so they can be added as binary variables to the basic pet info table
@@ -72,25 +79,22 @@ medication_wide = medication_df.pivot(index='pet_id', columns='pet_med_nm', valu
 medication_wide.columns = ['m_' + str(c).lower() for c in medication_wide]
 medication_wide = medication_wide.reset_index()
 
+# =============================================================================
+# state_sum = pet_customer_df[['us_state', 'pet_id']].groupby(['us_state']).count().reset_index()
+# 
+# 
+# data = dict (
+#     type = 'choropleth',
+#     locations = state_sum['us_state'],
+#     locationmode='USA-states',
+#     colorscale = 'viridis',
+#     z=state_sum['pet_id'])
+# 
+# lyt = dict(geo=dict(scope='usa'))
+# us_map = go.Figure(data=[data], layout = lyt)
+# py.offline.plot(us_map)
+# =============================================================================
 
-#food_allergy_wide.columns = ['fa_' + str(c).lower() for c in food_allergy_wide].reset_index()
-#food_allergy_wide = food_allergy_wide.reset_index()
-
-#Convert all profile characteristics to wide format so they can be added as binary variables to the basic pet info table
-
-#med_allergy_wide.columns = ['ma_' + str(c).lower() for c in med_allergy_wide].reset_index()
-#med_allergy_wide = med_allergy_wide.reset_index()
-
-conversion_list = [
-        {'df': food_allergy_wide, 'col_name':'pet_allergy_nm', 'vals':'food_allergy', 'prefix':'fa_'},
-        {'df': med_allergy_wide, 'col_name':'pet_med_allergy_nm', 'vals':'med_allergy', 'prefix':'ma_'},
-        {'df': food_allergy_wide, 'col_name':'pet_med_condition_nm', 'vals':'med_condition', 'prefix':'mc_'},
-        {'df': medication_wide, 'col_name':'pet_med_nm', 'vals':'medication', 'prefix':'mc_'},       
-        ]
-
-for convert in conversion_list:
-#    df = convert['df']
-    
 
 #
 ##don't know if this is the best source for this

@@ -46,7 +46,8 @@ SELECT pets.party_chewy_id                                       AS pet_id,
        ad.customer_address_last_order_flag, 
        c_int.gross_average_order_value, 
        c_int.net_average_order_value, 
-       c_int.customer_autoship_active_flag, 
+       c_int.customer_autoship_active_flag,
+       c_int.customer_order_last_placed_dttm, 
        c_int.customer_order_shipped_consistency 
 FROM   custods.party_pet AS pets 
        LEFT JOIN custods.pet_type pt 
@@ -59,7 +60,7 @@ FROM   custods.party_pet AS pets
               ON pc_int.petprofile_customer_master_id = c_int.customer_master_id 
        LEFT JOIN chewybi.customer_addresses ad 
               ON pc_int.petprofile_customer_id = ad.customer_id 
-WHERE  ad.customer_address_last_order_flag = 'true' 
+WHERE  ad.customer_address_last_order_flag = 'true'
+        AND c_int.customer_order_last_placed_dttm > '2019-11-01' 
         AND pc_int.petprofile_status = 1
-        AND pt.pet_type_nm = 'Dog'
-        AND pets.party_chewy_id BETWEEN  38000000 AND 40000000;
+        AND pt.pet_type_nm = 'Dog';

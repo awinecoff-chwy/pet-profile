@@ -20,5 +20,11 @@ FROM   (SELECT DISTINCT pet_med_condition_id,
        LEFT JOIN custods.pet_med_condition_rel pmc 
               ON conditions.pet_med_condition_id = pmc.pet_med_condition_id 
                  AND pets.party_chewy_id = pmc.party_chewy_id 
-WHERE pets.party_chewy_id BETWEEN  38000000 AND 40000000; 
+       LEFT JOIN integrate.customer_petprofile_ps pc_int 
+               ON pc_int.petprofile_master_id = pets.party_chewy_id
+       LEFT JOIN integrate.customer_ps c_int
+               ON pc_int.petprofile_customer_master_id = c_int.customer_master_id
+WHERE c_int.customer_order_last_placed_dttm > '2019-11-01'
+        AND pc_int.petprofile_status = 1
+        AND pc_int.petprofile_pettype_description = 'Dog';
 	
